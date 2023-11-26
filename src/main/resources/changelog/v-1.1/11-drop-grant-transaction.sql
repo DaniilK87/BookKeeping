@@ -1,0 +1,1 @@
+alter table grants drop column transaction_type
