@@ -4,6 +4,8 @@ import com.example.bookkeeping.dto.BalanceResponseDto;
 import com.example.bookkeeping.dto.MoneyRequestDto;
 import com.example.bookkeeping.dto.RatingResponseDto;
 import com.example.bookkeeping.entity.Grants;
+import com.example.bookkeeping.handling_exception.NoSuchBalanceException;
+import com.example.bookkeeping.handling_exception.TransferMoneyException;
 import com.example.bookkeeping.repo.GrantRepository;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
@@ -36,6 +39,7 @@ public class GrantServiceImpl implements GrantService {
         restTemplate.setMessageConverters(messageConverters);
         this.grantRepository = grantRepository;
     }
+
     @Override
     public RatingResponseDto getRating(Integer studentId) {
         String url = "http://localhost:8088/api/groups/student/rating/" + studentId;
@@ -46,6 +50,7 @@ public class GrantServiceImpl implements GrantService {
                 new ParameterizedTypeReference<RatingResponseDto>() {});
         return response.getBody();
     }
+
     @Override
     public void transferMoney(MoneyRequestDto moneyRequestDto, Integer balanceId, Integer studentId) {
         RatingResponseDto rating = getRating(studentId);
@@ -65,9 +70,15 @@ public class GrantServiceImpl implements GrantService {
             grantRepository.save(grants);
             grantRepository.save(balance);
         } else {
-            log.info("Деньги не отправлены, рейтинг ниже 4");
+            log.info("Рейтинг ниже 4, деньги не отправлены");
+            try {
+                 throw new TransferMoneyException("Рейтинг ниже 4, деньги не отправлены");
+            } catch (TransferMoneyException e) {
+                e.printStackTrace();
+            }
         }
     }
+
     @Override
     public void changeBalance(BalanceResponseDto balanceResponseDto, Integer balanceId) {
         Grants balance = grantRepository.getReferenceById(balanceId);
@@ -81,6 +92,7 @@ public class GrantServiceImpl implements GrantService {
         balance.setDate(date.toString());
         grantRepository.save(balance);
     }
+
     @Override
     public void createBalance(BalanceResponseDto balanceResponseDto) {
         Grants balance = new Grants();
@@ -93,12 +105,15 @@ public class GrantServiceImpl implements GrantService {
 
     @Override
     public BalanceResponseDto getBalanceById(Integer balanceId) {
-        Grants grants = grantRepository.getReferenceById(balanceId);
+        Grants id = grantRepository.getReferenceById(balanceId);
+        Grants grants = grantRepository.findById(id.getId()).orElseThrow(
+                () -> new NoSuchBalanceException("нет такого счета"));
         BalanceResponseDto balanceResponseDto = new BalanceResponseDto();
         balanceResponseDto.setId(grants.getId());
         balanceResponseDto.setBalance(grants.getBalance());
         balanceResponseDto.setTransactionType(grants.getTransactionType());
         return balanceResponseDto;
     }
+
 
 }

@@ -2,6 +2,7 @@ package com.example.bookkeeping.entity;
 
 import lombok.Data;
 
+
 import javax.persistence.*;
 
 @Entity
@@ -11,8 +12,7 @@ public class Grants {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_grant")
-    @SequenceGenerator(name = "seq_grant", sequenceName = "SEQ_GRANT", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "date")

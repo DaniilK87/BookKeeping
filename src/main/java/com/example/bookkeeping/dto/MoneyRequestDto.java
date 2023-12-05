@@ -9,11 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
-
-
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MoneyRequestDto {
