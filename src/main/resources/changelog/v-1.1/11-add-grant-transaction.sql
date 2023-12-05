@@ -1,1 +1,0 @@
-alter table grants add column transaction_type varchar(100)

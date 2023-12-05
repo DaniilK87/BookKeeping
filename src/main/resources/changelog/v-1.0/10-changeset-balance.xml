@@ -5,13 +5,13 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="4" author="Daniil87">
+    <changeSet id="3" author="Daniil87">
         <sqlFile dbms="postgresql"
                  encoding="utf8"
                  relativeToChangelogFile="true"
                  splitStatements="true"
                  stripComments="true"
-                 path="10-create-grant-table.sql"/>
+                 path="10-create-balance-table.sql"/>
         <rollback>
             <sqlFile
                     dbms="postgresql"
@@ -19,7 +19,7 @@
                     relativeToChangelogFile="true"
                     splitStatements="true"
                     stripComments="true"
-                    path="10-drop-grant-table.sql"/>
+                    path="10-drop-balance-table.sql"/>
         </rollback>
     </changeSet>
 
